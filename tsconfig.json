@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"outDir": "./dist/",
+		"sourceMap": true,
+		"strict": true,
+		"module": "commonjs",
+		"target": "esnext",
+		"jsx": "react",
+		"strictNullChecks": true,
+		"experimentalDecorators": true
+	},
+	"files": ["./src/index.tsx"]
+}
