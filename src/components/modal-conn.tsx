@@ -25,6 +25,7 @@ export function ModalConn(props: IModalConnProps) {
 
 	function testConn() {
 		setConnecting(true);
+		setConnTest(null);
 		const conn = mysql.createConnection(config());
 		conn.connect()
 			.pipe(finalize(() => setConnecting(false)))
