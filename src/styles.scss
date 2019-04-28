@@ -35,3 +35,9 @@ $nav-tabs-link-active-color: $gray-100;
 $nav-tabs-link-active-border-color: $gray-800 $gray-800 $nav-tabs-link-active-bg;
 
 @import "~bootstrap/scss/bootstrap";
+
+.abs-top-right {
+	position: absolute;
+	top: 0;
+	right: 0;
+}

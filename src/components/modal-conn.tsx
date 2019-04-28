@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Alert, Button, Col, Form, FormControlProps, Modal, ProgressBar } from "react-bootstrap";
 import { finalize } from "rxjs/operators";
-import { addConnection } from "../state/conns";
+import { addConn } from "../state/conns";
 import * as mysql from "../util/mysql-rx";
 
 interface IModalConnProps {
@@ -39,7 +39,7 @@ export function ModalConn(props: IModalConnProps) {
 	}
 
 	function save() {
-		addConnection(config()).subscribe(() => {
+		addConn(config()).subscribe(() => {
 			if (props.onHide) {
 				props.onHide();
 			}
