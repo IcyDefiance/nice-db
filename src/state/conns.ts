@@ -4,14 +4,13 @@ import { catchError, delayWhen, first, map, merge, shareReplay, switchMap, tap }
 import * as fs from "../util/fs-rx";
 import * as mysql from "../util/mysql-rx";
 
-const connsFile = path.join(__dirname, ".state/conns.json");
+const outFile = path.join(__dirname, ".state/conns.json");
+const updateSubj = new Subject<mysql.ConnectionOptions[]>();
 
-const connsUpdate = new Subject<mysql.ConnectionOptions[]>();
-
-export const conns$: Observable<mysql.ConnectionOptions[]> = fs.readFile(connsFile).pipe(
+export const conns$: Observable<mysql.ConnectionOptions[]> = fs.readFile(outFile).pipe(
 	catchError(() => of("[]")),
 	map((str) => JSON.parse(str.toString())),
-	merge(connsUpdate),
+	merge(updateSubj),
 	shareReplay(1),
 );
 
@@ -34,5 +33,5 @@ export function delConn$(index: number): Observable<mysql.ConnectionOptions[]> {
 }
 
 function update$(conns: mysql.ConnectionOptions[]): Observable<void> {
-	return fs.writeFile(connsFile, JSON.stringify(conns)).pipe(tap(() => connsUpdate.next(conns)));
+	return fs.writeFile(outFile, JSON.stringify(conns)).pipe(tap(() => updateSubj.next(conns)));
 }
