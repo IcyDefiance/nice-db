@@ -26,6 +26,10 @@ const config: Configuration = {
 					"sass-loader",
 				],
 			},
+			{
+				test: /\.node$/,
+				use: "node-loader",
+			},
 		],
 	},
 	plugins: [

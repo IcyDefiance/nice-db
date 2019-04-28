@@ -33,7 +33,7 @@ export function ModalConn() {
 		setConnecting(true);
 		setConnTest(null);
 		const conn = mysql.createConnection(config());
-		conn.connect()
+		conn.connect$()
 			.pipe(finalize(() => setConnecting(false)))
 			.subscribe({
 				next: () => {
@@ -56,10 +56,6 @@ export function ModalConn() {
 			</Modal.Header>
 			<Form>
 				<Modal.Body>
-					<span className="text-danger">
-						WARNING: Passwords are currently stored in a file as plain text. Don't type anything important
-						in that field yet.
-					</span>
 					<Form.Row>
 						<Col>
 							<Form.Group>

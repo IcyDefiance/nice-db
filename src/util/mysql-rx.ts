@@ -1,6 +1,6 @@
 import * as mysql from "mysql2";
 import { Observable } from "rxjs";
-import { cbToRxjs } from "./_callback-to-rxjs";
+import { subToCb } from "./_sub-to";
 
 export type ConnectionOptions = mysql.ConnectionOptions;
 export type QueryError = mysql.QueryError;
@@ -18,8 +18,8 @@ export class Connection {
 	/**
 	 * Error type is `QueryError`
 	 */
-	connect(): Observable<void> {
-		return new Observable((subscriber) => this.conn.connect(cbToRxjs(subscriber)));
+	connect$(): Observable<void> {
+		return new Observable((subscriber) => this.conn.connect(subToCb(subscriber)));
 	}
 
 	destroy() {
