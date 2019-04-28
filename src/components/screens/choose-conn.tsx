@@ -7,8 +7,13 @@ import * as React from "react";
 import { Button, Card, Col, Fade, Row } from "react-bootstrap";
 import { useObservable } from "rxjs-hooks";
 import { ModalConn, showModalConn } from "./choose-conn/modal-conn";
+import { ISafeConnectionOptions } from "@state/conns";
 
-export function ScreenChooseConn() {
+export interface IScreenChooseConnProps {
+	onConnected: (config: ISafeConnectionOptions) => void;
+}
+
+export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 	const conns = useObservable(() => conns$) || [];
 
 	function handleDeleteClick(index: number) {
@@ -39,7 +44,9 @@ export function ScreenChooseConn() {
 										</AButton>
 									</div>
 									<Card.Title>
-										{conn.host}:{conn.port}
+										<AButton onClick={() => onConnected(conn)}>
+											{conn.host}:{conn.port}
+										</AButton>
 									</Card.Title>
 									<b>User:</b> {conn.user}
 								</Card.Body>

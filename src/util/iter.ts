@@ -4,6 +4,23 @@ export function iter<T>(iterable: Iterable<T>): Iter<T> {
 	return new BasicIter(iterable);
 }
 
+@Frozen
+export abstract class Iter<T> implements Iterable<T> {
+	protected abstract iterable(): Iterable<T>;
+
+	enumerate() {
+		return new TransformIter(this.iterable(), enumerate);
+	}
+
+	map<U>(cb: (item: T) => U) {
+		return new TransformIter(this.iterable(), (iter) => map(iter, cb));
+	}
+
+	[Symbol.iterator](): Iterator<T> {
+		return this.iterable()[Symbol.iterator]();
+	}
+}
+
 function* enumerate<T>(iter: Iterable<T>): IterableIterator<[number, T]> {
 	let i = 0;
 	for (const item of iter) {
@@ -15,23 +32,6 @@ function* enumerate<T>(iter: Iterable<T>): IterableIterator<[number, T]> {
 function* map<T, U>(iter: Iterable<T>, cb: (item: T) => U): Iterator<U> {
 	for (const item of iter) {
 		yield cb(item);
-	}
-}
-
-@Frozen
-export abstract class Iter<T> implements Iterable<T> {
-	protected abstract iterable(): Iterable<T>;
-
-	enumerate() {
-		return new TransformIter(this.iterable(), enumerate);
-	}
-
-	map<U>(cb: (item: T) => U) {
-		return new TransformIter(this.iterable(), iter => map(iter, cb));
-	}
-
-	[Symbol.iterator](): Iterator<T> {
-		return this.iterable()[Symbol.iterator]();
 	}
 }
 

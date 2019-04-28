@@ -9,6 +9,11 @@ import { ConnectionOptions } from "../util/mysql-rx";
 const outFile = join(__dirname, ".state/conns.json");
 const updateSubj = new Subject<ISafeConnectionOptions[]>();
 
+export interface ISafeConnectionOptions extends ConnectionOptions {
+	password: undefined;
+	uuid: string;
+}
+
 export const conns$: Observable<ISafeConnectionOptions[]> = readFile$(outFile).pipe(
 	catchError(() => of("[]")),
 	map((str) => JSON.parse(str.toString())),
@@ -47,9 +52,4 @@ export function delConn$(index: number): Observable<ISafeConnectionOptions[]> {
 
 function update$(conns: ISafeConnectionOptions[]): Observable<void> {
 	return writeFile$(outFile, JSON.stringify(conns)).pipe(tap(() => updateSubj.next(conns)));
-}
-
-interface ISafeConnectionOptions extends ConnectionOptions {
-	password: undefined;
-	uuid: string;
 }
