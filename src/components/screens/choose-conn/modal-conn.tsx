@@ -1,24 +1,14 @@
 import * as React from "react";
-import {
-	Alert,
-	Button,
-	Col,
-	Form,
-	FormControlProps,
-	Modal,
-	OverlayTrigger,
-	ProgressBar,
-	Tooltip,
-} from "react-bootstrap";
-import { FormCheckInputProps } from "react-bootstrap/FormCheckInput";
+import { Alert, Button, Col, Form, FormControlProps, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
 import { finalize } from "rxjs/operators";
-import { Icon } from "../icons/icon";
-import { miInformation } from "../icons/icons";
-import { addConn$ } from "../state/conns";
-import * as mysql from "../util/mysql-rx";
-import { AButton } from "./a-button";
+import { Icon } from "../../../icons/icon";
+import { miInformation } from "../../../icons/icons";
+import { addConn$ } from "../../../state/conns";
+import * as mysql from "../../../util/mysql-rx";
+import { AButton } from "../../a-button";
+import { Loading } from "../../loading";
 
 const showSubj = new Subject<boolean>();
 
@@ -125,7 +115,7 @@ export function ModalConn() {
 					</Form.Check>
 
 					<div className="mt-3">
-						{connecting && <ProgressBar animated now={100} label="Connecting..." srOnly />}
+						{connecting && <Loading label="Connecting..." srOnly />}
 						{connTest && (
 							<Alert variant={connTest.err ? "danger" : "success"}>
 								{connTest.err || "Connected successfully"}
