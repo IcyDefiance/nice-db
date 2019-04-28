@@ -4,6 +4,7 @@ import { useObservable } from "rxjs-hooks";
 import { Icon } from "../icons/icon";
 import { miDatabasePlus, miDelete } from "../icons/icons";
 import { conns$, delConn$ } from "../state/conns";
+import { AButton } from "./a-button";
 import { confirm, ModalConfirm } from "./modal-confirm";
 import { ModalConn, showModalConn } from "./modal-conn";
 
@@ -31,13 +32,12 @@ export function Root() {
 								<Card style={{ width: "18rem" }} className="m-2">
 									<Card.Body>
 										<div className="position-relative">
-											<Button
-												variant="link"
-												className="abs-top-right text-body p-1 m-n2"
+											<AButton
+												className="abs-top-right text-body"
 												onClick={() => handleDeleteClick(i)}
 											>
 												<Icon icon={miDelete} />
-											</Button>
+											</AButton>
 										</div>
 										<Card.Title>
 											{conn.host}:{conn.port}

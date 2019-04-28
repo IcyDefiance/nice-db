@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import { IIconDefinition, SvgElType } from "./types";
+import { IIconDefinition } from "./icons";
 
 export interface IIconProps {
 	className?: string;
@@ -12,16 +12,9 @@ const StyledIcon = styled.svg`
 `;
 
 export function Icon({ className, icon }: IIconProps) {
-	const viewBox = `0 0 ${icon.dims[0]} ${icon.dims[1]}`;
-
 	return (
-		<StyledIcon className={className} viewBox={viewBox}>
-			{icon.els.map((el, i) => {
-				switch (el.type) {
-					case SvgElType.Path:
-						return <path fill="currentColor" d={el.d} key={i} />;
-				}
-			})}
+		<StyledIcon className={className} viewBox="0 0 24 24">
+			<path fill="currentColor" d={icon.path} />
 		</StyledIcon>
 	);
 }

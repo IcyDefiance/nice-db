@@ -1,2 +1,17 @@
-export { miDatabasePlus } from "./defs/database-plus";
-export { miDelete } from "./defs/delete";
+export const miDatabasePlus: IIconDefinition = {
+	path:
+		"M18,14H20V17H23V19H20V22H18V19H15V17H18V14M12,3C16.42,3 20,4.79 20,7C20,9.21 16.42,11 12,11C7.58," +
+		"11 4,9.21 4,7C4,4.79 7.58,3 12,3M4,9C4,11.21 7.58,13 12,13C16.42,13 20,11.21 20,9V9L20,12.08L19," +
+		"12C16.41,12 14.2,13.64 13.36,15.94L12,16C7.58,16 4,14.21 4,12V9M4,14C4,16.21 7.58,18 12,18H13C13," +
+		"19.05 13.27,20.04 13.75,20.9L12,21C7.58,21 4,19.21 4,17V14Z",
+};
+export const miDelete: IIconDefinition = {
+	path: "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z",
+};
+export const miInformation: IIconDefinition = {
+	path: "M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z",
+};
+
+export interface IIconDefinition {
+	path: string;
+}

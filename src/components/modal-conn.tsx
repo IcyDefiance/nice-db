@@ -1,11 +1,24 @@
 import * as React from "react";
-import { Alert, Button, Col, Form, FormControlProps, Modal, ProgressBar } from "react-bootstrap";
+import {
+	Alert,
+	Button,
+	Col,
+	Form,
+	FormControlProps,
+	Modal,
+	OverlayTrigger,
+	ProgressBar,
+	Tooltip,
+} from "react-bootstrap";
 import { FormCheckInputProps } from "react-bootstrap/FormCheckInput";
 import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
 import { finalize } from "rxjs/operators";
+import { Icon } from "../icons/icon";
+import { miInformation } from "../icons/icons";
 import { addConn$ } from "../state/conns";
 import * as mysql from "../util/mysql-rx";
+import { AButton } from "./a-button";
 
 const showSubj = new Subject<boolean>();
 
@@ -98,6 +111,17 @@ export function ModalConn() {
 							onChange={handleRememberChange}
 						/>
 						<Form.Check.Label>Remember password</Form.Check.Label>
+						<OverlayTrigger
+							overlay={
+								<Tooltip id="remember-tooltip">
+									Passwords are stored securely using your operating system's keychain.
+								</Tooltip>
+							}
+						>
+							<AButton className="text-info ml-1">
+								<Icon icon={miInformation} />
+							</AButton>
+						</OverlayTrigger>
 					</Form.Check>
 
 					<div className="mt-3">
