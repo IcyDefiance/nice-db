@@ -1,9 +1,9 @@
 import { join } from "path";
-import { Observable, of, Subject } from "rxjs";
+import { from, Observable, of, Subject } from "rxjs";
 import { catchError, delayWhen, first, map, merge, shareReplay, switchMap, tap } from "rxjs/operators";
 import * as uuidv4 from "uuid/v4";
 import { mkdir$, readFile$, writeFile$ } from "../util/fs-rx";
-import { setPassword$, deletePassword$ } from "../util/keytar-rx";
+import { deletePassword$, setPassword$ } from "../util/keytar-rx";
 import { ConnectionOptions } from "../util/mysql-rx";
 
 const outFile = join(__dirname, ".state/conns.json");
@@ -23,9 +23,9 @@ export function addConn$(config: ConnectionOptions, rememberPassword: boolean): 
 
 	let obs$;
 	if (config.password && rememberPassword) {
-		obs$ = setPassword$(`nIce DB`, uuid, config.password).pipe(map(() => null));
+		obs$ = setPassword$(`nIce DB`, uuid, config.password);
 	} else {
-		obs$ = of(null);
+		obs$ = from([undefined]);
 	}
 
 	return obs$.pipe(
