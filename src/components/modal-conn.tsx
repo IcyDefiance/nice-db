@@ -90,22 +90,24 @@ export function ModalConn() {
 						<Form.Label>Password</Form.Label>
 						<Form.Control type="password" onChange={handlePasswordChange} />
 					</Form.Group>
-					<Form.Check type="checkbox" id="password-remember">
+					<Form.Check custom type="checkbox" id="password-remember">
 						<Form.Check.Input
 							type="checkbox"
 							disabled={!password}
-							checked={remember}
+							checked={remember && !!password}
 							onChange={handleRememberChange}
 						/>
 						<Form.Check.Label>Remember password</Form.Check.Label>
 					</Form.Check>
 
-					{connecting && <ProgressBar animated now={100} label="Connecting..." srOnly />}
-					{connTest && (
-						<Alert variant={connTest.err ? "danger" : "success"}>
-							{connTest.err || "Connected successfully"}
-						</Alert>
-					)}
+					<div className="mt-3">
+						{connecting && <ProgressBar animated now={100} label="Connecting..." srOnly />}
+						{connTest && (
+							<Alert variant={connTest.err ? "danger" : "success"}>
+								{connTest.err || "Connected successfully"}
+							</Alert>
+						)}
+					</div>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" onClick={testConn}>
