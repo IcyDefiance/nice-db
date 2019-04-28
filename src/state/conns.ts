@@ -18,9 +18,17 @@ export const conns$: Observable<ISafeConnectionOptions[]> = readFile$(outFile).p
 
 const connsNow$ = conns$.pipe(first());
 
-export function addConn$(config: ConnectionOptions): Observable<ISafeConnectionOptions[]> {
+export function addConn$(config: ConnectionOptions, rememberPassword: boolean): Observable<ISafeConnectionOptions[]> {
 	const uuid = uuidv4();
-	return (config.password ? setPassword$(`nIce DB`, uuid, config.password).pipe(map(() => null)) : of(null)).pipe(
+
+	let obs$;
+	if (config.password && rememberPassword) {
+		obs$ = setPassword$(`nIce DB`, uuid, config.password).pipe(map(() => null));
+	} else {
+		obs$ = of(null);
+	}
+
+	return obs$.pipe(
 		delayWhen(() => mkdir$(join(__dirname, ".state"))),
 		catchError(() => of(null)),
 		switchMap(() => connsNow$),

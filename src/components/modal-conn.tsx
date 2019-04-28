@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Alert, Button, Col, Form, FormControlProps, Modal, ProgressBar } from "react-bootstrap";
+import { FormCheckInputProps } from "react-bootstrap/FormCheckInput";
 import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
 import { finalize } from "rxjs/operators";
@@ -17,6 +18,7 @@ export function ModalConn() {
 	const [port, setPort] = React.useState(3306);
 	const [user, setUser] = React.useState("root");
 	const [password, setPassword] = React.useState("");
+	const [remember, setRemember] = React.useState(false);
 	const [connecting, setConnecting] = React.useState(false);
 	const [connTest, setConnTest] = React.useState<{ err: string | null } | null>(null);
 
@@ -27,7 +29,17 @@ export function ModalConn() {
 	const handlePortChange = (event: React.FormEvent<FormControlProps>) => setPort(Number(event.currentTarget.value!));
 	const handleUserChange = (event: React.FormEvent<FormControlProps>) => setUser(event.currentTarget.value!);
 	const handlePasswordChange = (event: React.FormEvent<FormControlProps>) => setPassword(event.currentTarget.value!);
-	const hide = () => showSubj.next(false);
+	const handleRememberChange = () => setRemember(!remember);
+
+	function hide() {
+		setHost("localhost");
+		setPort(3306);
+		setUser("root");
+		setPassword("");
+		setRemember(false);
+		setConnTest(null);
+		showSubj.next(false);
+	}
 
 	function testConn() {
 		setConnecting(true);
@@ -45,7 +57,7 @@ export function ModalConn() {
 	}
 
 	function save() {
-		addConn$(config()).subscribe();
+		addConn$(config(), remember).subscribe();
 		hide();
 	}
 
@@ -78,6 +90,15 @@ export function ModalConn() {
 						<Form.Label>Password</Form.Label>
 						<Form.Control type="password" onChange={handlePasswordChange} />
 					</Form.Group>
+					<Form.Check type="checkbox" id="password-remember">
+						<Form.Check.Input
+							type="checkbox"
+							disabled={!password}
+							checked={remember}
+							onChange={handleRememberChange}
+						/>
+						<Form.Check.Label>Remember password</Form.Check.Label>
+					</Form.Check>
 
 					{connecting && <ProgressBar animated now={100} label="Connecting..." srOnly />}
 					{connTest && (
