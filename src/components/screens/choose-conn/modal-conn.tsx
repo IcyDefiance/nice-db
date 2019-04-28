@@ -1,14 +1,14 @@
+import { AButton } from "@components/a-button";
+import { Icon } from "@components/icons/icon";
+import { miInformation } from "@components/icons/icons";
+import { Loading } from "@components/loading";
+import { addConn$ } from "@state/conns";
+import { createConnection$, QueryError } from "@util/mysql-rx";
 import * as React from "react";
 import { Alert, Button, Col, Form, FormControlProps, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
 import { finalize } from "rxjs/operators";
-import { Icon } from "../../../icons/icon";
-import { miInformation } from "../../../icons/icons";
-import { addConn$ } from "../../../state/conns";
-import * as mysql from "../../../util/mysql-rx";
-import { AButton } from "../../a-button";
-import { Loading } from "../../loading";
 
 const showSubj = new Subject<boolean>();
 
@@ -47,7 +47,7 @@ export function ModalConn() {
 	function testConn() {
 		setConnecting(true);
 		setConnTest(null);
-		const conn = mysql.createConnection(config());
+		const conn = createConnection$(config());
 		conn.connect$()
 			.pipe(finalize(() => setConnecting(false)))
 			.subscribe({
@@ -55,7 +55,7 @@ export function ModalConn() {
 					setConnTest({ err: null });
 					conn.destroy();
 				},
-				error: (err: mysql.QueryError) => setConnTest({ err: err.message }),
+				error: (err: QueryError) => setConnTest({ err: err.message }),
 			});
 	}
 

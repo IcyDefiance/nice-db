@@ -1,12 +1,9 @@
-import * as fs from "fs";
+import { MakeDirectoryOptions, mkdir, PathLike, readFile, writeFile, WriteFileOptions } from "fs";
 import { Observable } from "rxjs";
 import { subToCb } from "./_sub-to";
 
-export function mkdir$(
-	path: fs.PathLike,
-	options?: string | number | fs.MakeDirectoryOptions | null,
-): Observable<void> {
-	return new Observable((subscriber) => fs.mkdir(path, options, subToCb(subscriber)));
+export function mkdir$(path: PathLike, options?: string | number | MakeDirectoryOptions | null): Observable<void> {
+	return new Observable((subscriber) => mkdir(path, options, subToCb(subscriber)));
 }
 
 export function readFile$(
@@ -25,13 +22,13 @@ export function readFile$(
 	path: string | number | Buffer | URL,
 	options?: string | { encoding?: string | null; flag?: string },
 ): Observable<string | Buffer> {
-	return new Observable((subscriber) => fs.readFile(path, options, subToCb(subscriber)));
+	return new Observable((subscriber) => readFile(path, options, subToCb(subscriber)));
 }
 
 export function writeFile$(
 	path: string | number | Buffer | URL,
 	data: any,
-	options?: fs.WriteFileOptions,
+	options?: WriteFileOptions,
 ): Observable<void> {
-	return new Observable((subscriber) => fs.writeFile(path, data, options || {}, subToCb(subscriber)));
+	return new Observable((subscriber) => writeFile(path, data, options || {}, subToCb(subscriber)));
 }

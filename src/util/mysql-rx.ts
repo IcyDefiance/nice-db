@@ -1,19 +1,19 @@
-import * as mysql from "mysql2";
+import { Connection as MysqlConnection, ConnectionOptions, createConnection, QueryError } from "mysql2";
 import { Observable } from "rxjs";
 import { subToCb } from "./_sub-to";
 
-export type ConnectionOptions = mysql.ConnectionOptions;
-export type QueryError = mysql.QueryError;
+export type ConnectionOptions = ConnectionOptions;
+export type QueryError = QueryError;
 
-export function createConnection(connectionUri: string): Connection;
+export function createConnection$(connectionUri: string): Connection;
 // tslint:disable-next-line: unified-signatures
-export function createConnection(config: mysql.ConnectionOptions): Connection;
-export function createConnection(config: any): Connection {
-	return new Connection(mysql.createConnection(config));
+export function createConnection$(config: ConnectionOptions): Connection;
+export function createConnection$(config: any): Connection {
+	return new Connection(createConnection(config));
 }
 
 export class Connection {
-	constructor(private conn: mysql.Connection) {}
+	constructor(private conn: MysqlConnection) {}
 
 	/**
 	 * Error type is `QueryError`

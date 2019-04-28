@@ -1,5 +1,6 @@
-import * as path from "path";
 import * as MiniCssExtractPlugin from "mini-css-extract-plugin";
+import { resolve } from "path";
+import { TsconfigPathsPlugin } from "tsconfig-paths-webpack-plugin";
 import { Configuration } from "webpack";
 
 const config: Configuration = {
@@ -42,10 +43,11 @@ const config: Configuration = {
 	],
 	resolve: {
 		extensions: [".tsx", ".ts", ".js"],
+		plugins: [new TsconfigPathsPlugin()],
 	},
 	output: {
 		filename: "bundle.js",
-		path: path.resolve(__dirname, "dist"),
+		path: resolve(__dirname, "dist"),
 	},
 	mode: process.env.NODE_ENV === "production" ? "production" : "development",
 };
