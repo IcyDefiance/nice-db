@@ -1,15 +1,18 @@
 import * as React from "react";
 import { Alert, Button, Col, Form, FormControlProps, Modal, ProgressBar } from "react-bootstrap";
+import { Subject } from "rxjs";
+import { useObservable } from "rxjs-hooks";
 import { finalize } from "rxjs/operators";
-import { addConn } from "../state/conns";
+import { addConn$ } from "../state/conns";
 import * as mysql from "../util/mysql-rx";
 
-interface IModalConnProps {
-	show?: boolean;
-	onHide?: () => void;
+const showSubj = new Subject<boolean>();
+
+export function showModalConn() {
+	showSubj.next(true);
 }
 
-export function ModalConn(props: IModalConnProps) {
+export function ModalConn() {
 	const [host, setHost] = React.useState("localhost");
 	const [port, setPort] = React.useState(3306);
 	const [user, setUser] = React.useState("root");
@@ -17,11 +20,14 @@ export function ModalConn(props: IModalConnProps) {
 	const [connecting, setConnecting] = React.useState(false);
 	const [connTest, setConnTest] = React.useState<{ err: string | null } | null>(null);
 
+	const show = useObservable(() => showSubj) || false;
+
+	const config = () => ({ host, port, user, password });
 	const handleHostChange = (event: React.FormEvent<FormControlProps>) => setHost(event.currentTarget.value!);
 	const handlePortChange = (event: React.FormEvent<FormControlProps>) => setPort(Number(event.currentTarget.value!));
 	const handleUserChange = (event: React.FormEvent<FormControlProps>) => setUser(event.currentTarget.value!);
 	const handlePasswordChange = (event: React.FormEvent<FormControlProps>) => setPassword(event.currentTarget.value!);
-	const config = () => ({ host, port, user, password });
+	const hide = () => showSubj.next(false);
 
 	function testConn() {
 		setConnecting(true);
@@ -39,15 +45,12 @@ export function ModalConn(props: IModalConnProps) {
 	}
 
 	function save() {
-		addConn(config()).subscribe(() => {
-			if (props.onHide) {
-				props.onHide();
-			}
-		});
+		addConn$(config()).subscribe();
+		hide();
 	}
 
 	return (
-		<Modal show={props.show} onHide={props.onHide}>
+		<Modal show={show} onHide={hide}>
 			<Modal.Header closeButton>
 				<Modal.Title>Add Connection</Modal.Title>
 			</Modal.Header>
@@ -91,7 +94,7 @@ export function ModalConn(props: IModalConnProps) {
 					<Button variant="secondary" onClick={testConn}>
 						Test Connection
 					</Button>
-					<Button variant="secondary" onClick={props.onHide}>
+					<Button variant="secondary" onClick={hide}>
 						Close
 					</Button>
 					<Button variant="primary" onClick={save}>

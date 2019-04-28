@@ -3,17 +3,16 @@ import { Button, Card, Col, Container, Fade, Row } from "react-bootstrap";
 import { useObservable } from "rxjs-hooks";
 import { Icon } from "../icons/icon";
 import { miDatabasePlus, miDelete } from "../icons/icons";
-import { conns$, delConn } from "../state/conns";
-import { ModalConn } from "./modal-conn";
-import { ModalConfirm, confirm } from "./modal-confirm";
+import { conns$, delConn$ } from "../state/conns";
+import { confirm, ModalConfirm } from "./modal-confirm";
+import { ModalConn, showModalConn } from "./modal-conn";
 
 export function Root() {
-	const [loginVisible, setLoginVisible] = React.useState(false);
 	const conns = useObservable(() => conns$) || [];
 
 	function handleDeleteClick(index: number) {
 		confirm("Are you sure you want to delete this connection?", "Delete", "danger").subscribe(() =>
-			delConn(index).subscribe(),
+			delConn$(index).subscribe(),
 		);
 	}
 
@@ -21,7 +20,7 @@ export function Root() {
 		<Container fluid className="mt-3">
 			<Row>
 				<Col className="flex-grow-0">
-					<Button variant="outline-secondary" onClick={() => setLoginVisible(true)} className="text-nowrap">
+					<Button variant="outline-secondary" onClick={showModalConn} className="text-nowrap">
 						<Icon icon={miDatabasePlus} /> Add Connection
 					</Button>
 				</Col>
@@ -50,7 +49,7 @@ export function Root() {
 				</Col>
 			</Row>
 
-			<ModalConn show={loginVisible} onHide={() => setLoginVisible(false)} />
+			<ModalConn />
 			<ModalConfirm />
 		</Container>
 	);

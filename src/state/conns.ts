@@ -15,22 +15,24 @@ export const conns$: Observable<mysql.ConnectionOptions[]> = fs.readFile(connsFi
 	shareReplay(1),
 );
 
-export function addConn(config: mysql.ConnectionOptions): Observable<mysql.ConnectionOptions[]> {
+const connsNow$ = conns$.pipe(first());
+
+export function addConn$(config: mysql.ConnectionOptions): Observable<mysql.ConnectionOptions[]> {
 	return fs.mkdir(path.join(__dirname, ".state")).pipe(
 		catchError(() => of(null)),
-		switchMap(() => conns$),
-		first(),
+		switchMap(() => connsNow$),
 		map((conns) => [...conns, config]),
-		delayWhen((conns) => fs.writeFile(connsFile, JSON.stringify(conns))),
-		tap((conns) => connsUpdate.next(conns)),
+		delayWhen(update$),
 	);
 }
 
-export function delConn(index: number): Observable<mysql.ConnectionOptions[]> {
-	return conns$.pipe(
-		first(),
-		map((conns) => conns.splice(index, 1)),
-		delayWhen((conns) => fs.writeFile(connsFile, JSON.stringify(conns))),
-		tap((conns) => connsUpdate.next(conns)),
+export function delConn$(index: number): Observable<mysql.ConnectionOptions[]> {
+	return connsNow$.pipe(
+		map((conns) => [...conns.slice(0, index), ...conns.slice(index + 1)]),
+		delayWhen(update$),
 	);
+}
+
+function update$(conns: mysql.ConnectionOptions[]): Observable<void> {
+	return fs.writeFile(connsFile, JSON.stringify(conns)).pipe(tap(() => connsUpdate.next(conns)));
 }

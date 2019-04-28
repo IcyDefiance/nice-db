@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Button, Modal } from "react-bootstrap";
-import { BehaviorSubject, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
-import { first } from "rxjs/operators";
 
 type ButtonVariants =
 	| "primary"
@@ -30,41 +29,38 @@ interface IOpts {
 }
 
 const optsSubj = new Subject<IOpts | null>();
-const showBS = new Subject<boolean>();
+const showSubj = new Subject<boolean>();
 let confirmSubj: Subject<void> | null = null;
 
-export function confirm(msg: string, confirmText?: string, variant?: ButtonVariants) {
+export function confirm(msg: string, confirmText?: string, variant?: ButtonVariants): Subject<void> {
 	optsSubj.next({ msg, confirmText, variant });
-	showBS.next(true);
+	showSubj.next(true);
 	confirmSubj = new Subject();
 	return confirmSubj;
 }
 
 export function ModalConfirm() {
 	const opts = useObservable(() => optsSubj) || { msg: "" };
-	const show = useObservable(() => showBS) || false;
+	const show = useObservable(() => showSubj) || false;
 
-	const hide = () => showBS.next(false);
+	function hide() {
+		confirmSubj!.complete();
+		showSubj.next(false);
+	}
 
 	function okay() {
 		confirmSubj!.next();
-		confirmSubj!.complete();
-		hide();
-	}
-
-	function cancel() {
-		confirmSubj!.complete();
 		hide();
 	}
 
 	return (
-		<Modal show={show} onHide={cancel}>
+		<Modal show={show} onHide={hide}>
 			<Modal.Header closeButton>
 				<Modal.Title>Please Confirm</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>{opts.msg}</Modal.Body>
 			<Modal.Footer>
-				<Button variant="secondary" onClick={cancel}>
+				<Button variant="secondary" onClick={hide}>
 					Cancel
 				</Button>
 				<Button variant={opts.variant || "primary"} onClick={okay}>
