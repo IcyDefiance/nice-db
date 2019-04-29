@@ -28,7 +28,7 @@ export function addConn$(config: ConnectionOptions, rememberPassword: boolean): 
 
 	let obs$;
 	if (config.password && rememberPassword) {
-		obs$ = setPassword$(`nIce DB`, uuid, config.password);
+		obs$ = setPassword$("nIce DB", uuid, config.password);
 	} else {
 		obs$ = from([undefined]);
 	}
