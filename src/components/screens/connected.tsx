@@ -11,12 +11,16 @@ export interface IScreenConnectedProps {
 
 export function ScreenConnected({ config }: IScreenConnectedProps) {
 	const conn$ = getPassword$("nIce DB", config.uuid).pipe(
-		map((password) => createConnection({ ...config, password: password! })),
+		map((password) => {
+			const opts = { ...config, password: password! };
+			delete opts.uuid;
+			return createConnection(opts);
+		}),
 	);
 
 	const [databases] = useObservable(() =>
 		conn$.pipe(switchMap((conn) => conn.query$<RowDataPacket[]>("SHOW DATABASES"))),
 	) || [null];
 
-	return <ul>{databases && databases.map((db) => <li>{db.Database}</li>)}</ul>;
+	return <ul>{databases && databases.map((db, i) => <li key={i}>{db.Database}</li>)}</ul>;
 }
