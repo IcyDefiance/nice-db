@@ -2,12 +2,11 @@ import { AButton } from "@components/a-button";
 import { Icon } from "@components/icons/icon";
 import { miDatabasePlus, miDelete } from "@components/icons/icons";
 import { confirm } from "@components/modal-confirm";
-import { conns$, delConn$ } from "@state/conns";
+import { conns$, delConn$, ISafeConnectionOptions } from "@state/conns";
 import * as React from "react";
 import { Button, Card, Col, Fade, Row } from "react-bootstrap";
 import { useObservable } from "rxjs-hooks";
 import { ModalConn, showModalConn } from "./choose-conn/modal-conn";
-import { ISafeConnectionOptions } from "@state/conns";
 
 export interface IScreenChooseConnProps {
 	onConnected: (config: ISafeConnectionOptions) => void;

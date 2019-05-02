@@ -1,3 +1,4 @@
+import { Editor } from "@components/editor";
 import { ISafeConnectionOptions } from "@state/conns";
 import { getPassword$ } from "@util/keytar-rx";
 import { createConnection, RowDataPacket } from "@util/mysql-rx";
@@ -22,5 +23,10 @@ export function ScreenConnected({ config }: IScreenConnectedProps) {
 		conn$.pipe(switchMap((conn) => conn.query$<RowDataPacket[]>("SHOW DATABASES"))),
 	) || [null];
 
-	return <ul>{databases && databases.map((db, i) => <li key={i}>{db.Database}</li>)}</ul>;
+	return (
+		<>
+			<Editor />
+			<ul className="mt-3">{databases && databases.map((db, i) => <li key={i}>{db.Database}</li>)}</ul>
+		</>
+	);
 }

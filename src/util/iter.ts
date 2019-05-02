@@ -1,4 +1,5 @@
 import { Frozen, Immutable } from "./decorators";
+import { IOption, some, none } from "../util/option";
 
 export function iter<T>(iterable: Iterable<T>): Iter<T> {
 	return new BasicIter(iterable);
@@ -8,16 +9,63 @@ export function iter<T>(iterable: Iterable<T>): Iter<T> {
 export abstract class Iter<T> implements Iterable<T> {
 	protected abstract iterable(): Iterable<T>;
 
-	enumerate() {
-		return new TransformIter(this.iterable(), enumerate);
-	}
-
-	map<U>(cb: (item: T) => U) {
-		return new TransformIter(this.iterable(), (iter) => map(iter, cb));
-	}
-
 	[Symbol.iterator](): Iterator<T> {
 		return this.iterable()[Symbol.iterator]();
+	}
+
+	// --- OPERATORS ---
+
+	enumerate(): Iter<[number, T]> {
+		return this.makeTransform(enumerate);
+	}
+
+	filter(cb: (item: T) => boolean): Iter<T> {
+		return this.makeTransform(filter, cb);
+	}
+
+	map<U>(cb: (item: T) => U): Iter<U> {
+		return this.makeTransform(map, cb);
+	}
+
+	skip(count: number): Iter<T> {
+		return this.makeTransform(skip, count);
+	}
+
+	// --- COLLECTORS ---
+
+	eq(other: Iterable<T>): boolean {
+		const left = this[Symbol.iterator]();
+		const right = other[Symbol.iterator]();
+		while (true) {
+			const x1 = left.next();
+			const x2 = right.next();
+			if (x1.done && x2.done) {
+				return true;
+			} else if (x1.done || x2.done || x1.value !== x2.value) {
+				return false;
+			}
+		}
+	}
+
+	nth(index: number): IOption<T> {
+		for (const item of this) {
+			if (index <= 0) {
+				return some(item);
+			}
+
+			--index;
+		}
+
+		return none;
+	}
+
+	// --- PRIVATE ---
+
+	private makeTransform<U, Args extends any[]>(
+		func: (iter: Iterable<T>, ...args: Args) => IterableIterator<U>,
+		...args: Args
+	): TransformIter<T, U> {
+		return new TransformIter(this.iterable(), (iter) => func(iter, ...args));
 	}
 }
 
@@ -29,9 +77,27 @@ function* enumerate<T>(iter: Iterable<T>): IterableIterator<[number, T]> {
 	}
 }
 
-function* map<T, U>(iter: Iterable<T>, cb: (item: T) => U): Iterator<U> {
+function* filter<T>(iter: Iterable<T>, cb: (item: T) => boolean): IterableIterator<T> {
+	for (const item of iter) {
+		if (cb(item)) {
+			yield item;
+		}
+	}
+}
+
+function* map<T, U>(iter: Iterable<T>, cb: (item: T) => U): IterableIterator<U> {
 	for (const item of iter) {
 		yield cb(item);
+	}
+}
+
+function* skip<T>(iter: Iterable<T>, count: number): IterableIterator<T> {
+	for (const item of iter) {
+		if (count <= 0) {
+			yield item;
+		} else {
+			count--;
+		}
 	}
 }
 

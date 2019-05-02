@@ -7,14 +7,14 @@ export interface IIconProps {
 	icon: IIconDefinition;
 }
 
-const StyledIcon = styled.svg`
+const StyledSvg = styled.svg`
 	width: 1em;
 `;
 
 export function Icon({ className, icon }: IIconProps) {
 	return (
-		<StyledIcon className={className} viewBox="0 0 24 24">
+		<StyledSvg className={className} viewBox="0 0 24 24">
 			<path fill="currentColor" d={icon.path} />
-		</StyledIcon>
+		</StyledSvg>
 	);
 }

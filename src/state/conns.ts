@@ -1,10 +1,10 @@
+import { mkdir$, readFile$, writeFile$ } from "@util/fs-rx";
+import { deletePassword$, setPassword$ } from "@util/keytar-rx";
+import { ConnectionOptions } from "@util/mysql-rx";
 import { join } from "path";
 import { from, Observable, of, Subject } from "rxjs";
 import { catchError, delayWhen, first, map, merge, shareReplay, switchMap, tap } from "rxjs/operators";
 import * as uuidv4 from "uuid/v4";
-import { mkdir$, readFile$, writeFile$ } from "../util/fs-rx";
-import { deletePassword$, setPassword$ } from "../util/keytar-rx";
-import { ConnectionOptions } from "../util/mysql-rx";
 
 const outFile = join(__dirname, ".state/conns.json");
 const updateSubj = new Subject<ISafeConnectionOptions[]>();
