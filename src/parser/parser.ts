@@ -115,5 +115,3 @@ interface ParserErrorFailure {
 	kind: ErrKind.Failure;
 	input?: Slice;
 }
-
-console.log(tag("one")(slice("one two")));
