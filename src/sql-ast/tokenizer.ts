@@ -1,7 +1,9 @@
-import { altComplete, map, Parser, tag, many0, ParserResult } from "../parser/parser";
+import { alphanum1 } from "../parser/complete";
+import { altComplete, many0, map, Parser, ParserResult, verify } from "../parser/parser";
 import { Slice, slice } from "../util/slice";
 import { keywords } from "./keywords";
 
+const ident = verify(alphanum1, (val) => !isNaN(Number(val.toString())));
 const keyword: Parser<ITokenKeyword> = map(altComplete(...Object.values(keywords)), (text) => ({
 	type: TokenType.Keyword,
 	text,

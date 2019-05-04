@@ -1,12 +1,13 @@
 import { Editor } from "@components/editor";
 import { ISafeConnectionOptions } from "@state/conns";
 import { getPassword$ } from "@util/keytar-rx";
-import { createConnection, RowDataPacket } from "@util/mysql-rx";
+import { createConnection, RowDataPacket, FieldPacket, QueryError } from "@util/mysql-rx";
 import * as React from "react";
-import { useObservable, useEventCallback } from "rxjs-hooks";
-import { map, switchMap, switchMapTo, withLatestFrom } from "rxjs/operators";
 import { Button, Table } from "react-bootstrap";
-import { Subject, Observable } from "rxjs";
+import { Subject, of, combineLatest } from "rxjs";
+import { useObservable } from "rxjs-hooks";
+import { map, switchMap, withLatestFrom, catchError, delayWhen } from "rxjs/operators";
+import { tuple } from "@util/tuple";
 
 const run$ = new Subject<void>();
 
@@ -27,17 +28,17 @@ export function ScreenConnected({ config }: IScreenConnectedProps) {
 		),
 	);
 
-	const [rows, fields] = useObservable(() =>
-		conn$.pipe(
-			switchMap((conn) => run$.pipe(map(() => conn))),
-			withLatestFrom(sql$),
-			switchMap(([conn, sql]) => conn.query$<RowDataPacket[]>(sql)),
+	const [rows, fields, err] = useObservable(() =>
+		combineLatest(conn$, sql$).pipe(
+			delayWhen(() => run$),
+			switchMap(([conn, sql]) =>
+				conn.query$<RowDataPacket[]>(sql).pipe(
+					map(([rows, fields]) => tuple(rows, fields, null)),
+					catchError((err: QueryError) => of(tuple(null, null, err.message))),
+				),
+			),
 		),
-	) || [null, null];
-
-	const [databases] = useObservable(() =>
-		conn$.pipe(switchMap((conn) => conn.query$<RowDataPacket[]>("SHOW DATABASES"))),
-	) || [null];
+	) || [null, null, null];
 
 	return (
 		<>
@@ -45,6 +46,7 @@ export function ScreenConnected({ config }: IScreenConnectedProps) {
 				Run
 			</Button>
 			<Editor className="mt-1" onChange={(sql) => sql$.next(sql)} />
+			<div className="text-danger">{err}</div>
 			{rows && fields && (
 				<Table striped bordered size="sm" className="mt-3">
 					<thead>
@@ -65,7 +67,6 @@ export function ScreenConnected({ config }: IScreenConnectedProps) {
 					</tbody>
 				</Table>
 			)}
-			<ul className="mt-3">{databases && databases.map((db, i) => <li key={i}>{db.Database}</li>)}</ul>
 		</>
 	);
 }

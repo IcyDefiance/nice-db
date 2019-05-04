@@ -1,7 +1,9 @@
 export interface IResult<T, E> {
+	andThen<U>(cb: (val: T) => IResult<U, E>): IResult<U, E>;
 	isOk(): boolean;
 	isErr(): boolean;
 	map<U>(cb: (val: T) => U): IResult<U, E>;
+	mapErr<U>(cb: (val: E) => U): IResult<T, U>;
 	match<U>(matcher: IResultMatcher<T, E, U>): U;
 	unwrap(): T;
 	unwrapErr(): E;
@@ -9,6 +11,10 @@ export interface IResult<T, E> {
 
 export class Ok<T> implements IResult<T, never> {
 	constructor(private val: T) {}
+
+	andThen<U>(cb: (val: T) => IResult<U, never>): IResult<U, never> {
+		return cb(this.val);
+	}
 
 	isOk(): boolean {
 		return true;
@@ -20,6 +26,10 @@ export class Ok<T> implements IResult<T, never> {
 
 	map<U>(cb: (val: T) => U): IResult<U, never> {
 		return ok(cb(this.val));
+	}
+
+	mapErr(): IResult<T, never> {
+		return this;
 	}
 
 	match<U>(matcher: IResultMatcher<T, never, U>): U {
@@ -38,6 +48,10 @@ export class Ok<T> implements IResult<T, never> {
 export class Err<E> implements IResult<never, E> {
 	constructor(private err: E) {}
 
+	andThen(): IResult<never, E> {
+		return this;
+	}
+
 	isOk(): boolean {
 		return false;
 	}
@@ -48,6 +62,10 @@ export class Err<E> implements IResult<never, E> {
 
 	map(): IResult<never, E> {
 		return this;
+	}
+
+	mapErr<U>(cb: (val: E) => U): IResult<never, U> {
+		return err(cb(this.err));
 	}
 
 	match<U>(matcher: IResultMatcher<never, E, U>): U {

@@ -28,6 +28,10 @@ export class Slice implements Iterable<string> {
 		return new Slice(this.str, start, end);
 	}
 
+	toString() {
+		return this.str.slice(this.start, this.end);
+	}
+
 	*[Symbol.iterator](): Iterator<string> {
 		for (let i = 0; i < this.str.length; i++) {
 			yield this.str[i];

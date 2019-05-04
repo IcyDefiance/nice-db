@@ -3,7 +3,8 @@ import { err, IResult, ok } from "../util/result";
 import { Slice, slice } from "../util/slice";
 
 export type Parser<T> = (input: Slice) => ParserResult<T>;
-export type ParserResult<T> = IResult<[Slice, T], ParserError>;
+export type ParserOk<T> = { val: T; rem: Slice; inc: boolean };
+export type ParserResult<T> = IResult<ParserOk<T>, ParserError>;
 
 export function altComplete<T>(...parsers: Parser<T>[]): Parser<T> {
 	return (input: Slice) =>
@@ -16,30 +17,35 @@ export function altComplete<T>(...parsers: Parser<T>[]): Parser<T> {
 
 export function many0<T>(parser: Parser<T>): Parser<T[]> {
 	return (input) => {
-		const ret: T[] = [];
+		const val: T[] = [];
 		while (true) {
 			const result = parser(input);
 
 			if (result.isErr()) {
-				if (result.unwrapErr().isIncomplete()) {
-					return (result as unknown) as ParserResult<T[]>;
-				}
-
-				return ok([input, ret]);
+				return ok({ val, rem: input, inc: result.unwrapErr().isIncomplete() });
 			}
 
-			const [rem, out] = result.unwrap();
+			const { rem, val: out } = result.unwrap();
 			if (input.length === rem.length) {
 				return err(ParserError.newFailure(input));
 			}
 			input = rem;
-			ret.push(out);
+			val.push(out);
 		}
 	};
 }
 
 export function map<O, P>(parser: Parser<O>, cb: (out: O) => P): Parser<P> {
-	return (input) => parser(input).map(([rem, val]) => [rem, cb(val)]);
+	return (input) => parser(input).map(({ val, ...props }) => ({ val: cb(val), ...props }));
+}
+
+export function mapRes<O, P>(parser: Parser<O>, cb: (out: O) => IResult<P, any>): Parser<P> {
+	return (input) =>
+		parser(input).andThen(({ val, ...props }) =>
+			cb(val)
+				.map((nval) => ({ val: nval, ...props }))
+				.mapErr(() => ParserError.newError(input)),
+		);
 }
 
 export function tag(text: string): Parser<Slice> {
@@ -48,13 +54,41 @@ export function tag(text: string): Parser<Slice> {
 			return err(ParserError.newIncomplete(text.length - input.length));
 		}
 
-		const match = input.slice(0, text.length);
-		if (match.eq(text)) {
-			return ok([input.slice(text.length), match]);
+		const val = input.slice(0, text.length);
+		if (val.eq(text)) {
+			return ok({ val, rem: input.slice(text.length), inc: false });
 		} else {
 			return err(ParserError.newError(input));
 		}
 	};
+}
+
+export function takeWhile(cb: (ch: string) => boolean): Parser<Slice> {
+	return (input: Slice) => {
+		let rem = input.slice();
+		let len = 0;
+		while (rem.length && cb(rem.get(0))) {
+			++len;
+			rem = rem.slice(1);
+		}
+		const inc = !rem.length;
+		return ok({ val: input.slice(0, len), rem, inc });
+	};
+}
+
+export function takeWhile1(cb: (ch: string) => boolean): Parser<Slice> {
+	return verify(takeWhile(cb), (out) => !!out.length);
+}
+
+export function verify<O>(parser: Parser<O>, cb: (out: O) => boolean): Parser<O> {
+	return (input) =>
+		parser(input).andThen((res) => {
+			if (cb(res.val)) {
+				return ok(res);
+			} else {
+				return err(ParserError.newError(input));
+			}
+		});
 }
 
 export class ParserError {

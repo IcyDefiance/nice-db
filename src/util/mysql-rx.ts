@@ -12,6 +12,7 @@ import { subToCb } from "./_sub-to";
 import Query = require("mysql/lib/protocol/sequences/Query");
 
 export type ConnectionOptions = ConnectionOptions;
+export type FieldPacket = FieldPacket;
 export type QueryError = QueryError;
 export type RowDataPacket = RowDataPacket;
 
