@@ -23,6 +23,10 @@ export abstract class Iter<T> implements Iterable<T> {
 		return this.makeTransform(filter, cb);
 	}
 
+	inspect(cb: (item: T) => void): Iter<T> {
+		return this.makeTransform(inspect, cb);
+	}
+
 	map<U>(cb: (item: T) => U): Iter<U> {
 		return this.makeTransform(map, cb);
 	}
@@ -33,8 +37,17 @@ export abstract class Iter<T> implements Iterable<T> {
 
 	// --- COLLECTORS ---
 
+	any(cb: (item: T) => boolean): boolean {
+		for (const item of this.iterable()) {
+			if (cb(item)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	eq(other: Iterable<T>): boolean {
-		const left = this[Symbol.iterator]();
+		const left = this.iterable()[Symbol.iterator]();
 		const right = other[Symbol.iterator]();
 		while (true) {
 			const x1 = left.next();
@@ -48,7 +61,7 @@ export abstract class Iter<T> implements Iterable<T> {
 	}
 
 	nth(index: number): IOption<T> {
-		for (const item of this) {
+		for (const item of this.iterable()) {
 			if (index <= 0) {
 				return some(item);
 			}
@@ -82,6 +95,13 @@ function* filter<T>(iter: Iterable<T>, cb: (item: T) => boolean): IterableIterat
 		if (cb(item)) {
 			yield item;
 		}
+	}
+}
+
+function* inspect<T>(iter: Iterable<T>, cb: (item: T) => void): IterableIterator<T> {
+	for (const item of iter) {
+		cb(item);
+		yield item;
 	}
 }
 

@@ -3,5 +3,9 @@ export function isAlpha(ch: string) {
 }
 
 export function isAlphanum(ch: string) {
-	return isAlpha(ch) || (ch >= "0" && ch <= "9");
+	return isAlpha(ch) || isDigit(ch);
+}
+
+export function isDigit(ch: string) {
+	return ch >= "0" && ch <= "9";
 }

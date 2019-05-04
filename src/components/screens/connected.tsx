@@ -1,13 +1,13 @@
 import { Editor } from "@components/editor";
 import { ISafeConnectionOptions } from "@state/conns";
 import { getPassword$ } from "@util/keytar-rx";
-import { createConnection, RowDataPacket, FieldPacket, QueryError } from "@util/mysql-rx";
+import { createConnection, QueryError, RowDataPacket } from "@util/mysql-rx";
+import { tuple } from "@util/tuple";
 import * as React from "react";
 import { Button, Table } from "react-bootstrap";
-import { Subject, of, combineLatest } from "rxjs";
+import { combineLatest, of, Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
-import { map, switchMap, withLatestFrom, catchError, delayWhen } from "rxjs/operators";
-import { tuple } from "@util/tuple";
+import { catchError, delayWhen, map, switchMap } from "rxjs/operators";
 
 const run$ = new Subject<void>();
 

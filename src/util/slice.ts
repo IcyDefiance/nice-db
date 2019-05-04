@@ -5,10 +5,10 @@ export function slice(str: string, start?: number, end?: number): Slice {
 }
 
 export class Slice implements Iterable<string> {
-	constructor(private str: string, private start: number, private end?: number) {}
+	constructor(public str: string, public start: number, public end?: number) {}
 
 	get length(): number {
-		return (this.end || this.str.length) - this.start;
+		return (typeof this.end === "undefined" ? this.str.length : this.end) - this.start;
 	}
 
 	eq(other: string | Slice): boolean {
@@ -24,11 +24,15 @@ export class Slice implements Iterable<string> {
 
 	slice(start?: number, end?: number): Slice {
 		start = (start || 0) + this.start;
-		end = end ? end + this.start : this.end;
+		end = typeof end === "undefined" ? this.end : end + this.start;
 		return new Slice(this.str, start, end);
 	}
 
-	toString() {
+	toUpperCase(): string {
+		return this.toString().toUpperCase();
+	}
+
+	toString(): string {
 		return this.str.slice(this.start, this.end);
 	}
 
