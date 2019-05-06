@@ -2,7 +2,7 @@ import { alphanum1, multispace1 } from "../parser/complete";
 import { altComplete, many0, map, oneOf, verify } from "../parser/parser";
 import { isDigit } from "../parser/util";
 import { iter } from "../util/iter";
-import { Slice, slice } from "../util/slice";
+import { SliceStr, sliceStr } from "../util/slice";
 import { keywords } from "./keywords";
 
 const keywordSet = new Set(Object.values(keywords));
@@ -20,13 +20,13 @@ const whitespace = map(multispace1, (text) => ({ type: TokenType.Whitespace, tex
 const token = altComplete(ident, punctuation, whitespace);
 const tokens = many0(token);
 
-export function tokenize(sql: string): { val: IToken[]; rem: Slice } {
-	return tokens(slice(sql)).unwrap();
+export function tokenize(sql: string): { val: IToken[]; rem: SliceStr } {
+	return tokens(sliceStr(sql)).unwrap();
 }
 
 export interface IToken {
 	type: TokenType;
-	text: Slice;
+	text: SliceStr;
 }
 
 export enum TokenType {

@@ -1,12 +1,12 @@
 import { iter } from "../util/iter";
 import { err, Err, IResult, ok } from "../util/result";
-import { Slice, slice } from "../util/slice";
+import { SliceStr, sliceStr } from "../util/slice";
 
-export type Parser<T> = (input: Slice) => ParserResult<T>;
-export type ParserResult<T> = IResult<{ val: T; rem: Slice }, ParserError>;
+export type Parser<T> = (input: SliceStr) => ParserResult<T>;
+export type ParserResult<T> = IResult<{ val: T; rem: SliceStr }, ParserError>;
 
 export function altComplete<T>(...parsers: Parser<T>[]): Parser<T> {
-	return (input: Slice) =>
+	return (input: SliceStr) =>
 		iter(parsers)
 			.map((parser) => parser(input))
 			.filter((result) => result.isOk())
@@ -52,15 +52,15 @@ export function mapRes<O, P>(parser: Parser<O>, cb: (out: O) => IResult<P, any>)
 		);
 }
 
-export function oneOf(chars: string, complete: boolean = true): Parser<Slice> {
+export function oneOf(chars: string, complete: boolean = true): Parser<SliceStr> {
 	const set = new Set(chars);
-	return (input: Slice) =>
+	return (input: SliceStr) =>
 		set.has(input.get(0)) ? success(input.slice(1), input.slice(0, 1)) : maybeIncomplete(complete, input, 1);
 }
 
-export function tag(text: string, complete: boolean = true): Parser<Slice> {
-	return (input: Slice) => {
-		if (input.length < text.length && input.eq(slice(text, 0, input.length))) {
+export function tag(text: string, complete: boolean = true): Parser<SliceStr> {
+	return (input: SliceStr) => {
+		if (input.length < text.length && input.eq(sliceStr(text, 0, input.length))) {
 			return maybeIncomplete(complete, input, text.length - input.length);
 		}
 
@@ -69,8 +69,8 @@ export function tag(text: string, complete: boolean = true): Parser<Slice> {
 	};
 }
 
-export function takeWhile(cb: (ch: string) => boolean): Parser<Slice> {
-	return (input: Slice) => {
+export function takeWhile(cb: (ch: string) => boolean): Parser<SliceStr> {
+	return (input: SliceStr) => {
 		let rem = input.slice();
 		let len = 0;
 		while (rem.length && cb(rem.get(0))) {
@@ -81,7 +81,7 @@ export function takeWhile(cb: (ch: string) => boolean): Parser<Slice> {
 	};
 }
 
-export function takeWhile1(cb: (ch: string) => boolean): Parser<Slice> {
+export function takeWhile1(cb: (ch: string) => boolean): Parser<SliceStr> {
 	return verify(takeWhile(cb), (out) => !!out.length);
 }
 
@@ -98,13 +98,13 @@ export class ParserError {
 		return ret;
 	}
 
-	static newError(input?: Slice): ParserError {
+	static newError(input?: SliceStr): ParserError {
 		const ret = new ParserError();
 		ret.info = { kind: ErrKind.Error, input };
 		return ret;
 	}
 
-	static newFailure(input?: Slice): ParserError {
+	static newFailure(input?: SliceStr): ParserError {
 		const ret = new ParserError();
 		ret.info = { kind: ErrKind.Failure, input };
 		return ret;
@@ -125,15 +125,15 @@ export class ParserError {
 	}
 }
 
-function success<T>(rem: Slice, val: T) {
+function success<T>(rem: SliceStr, val: T) {
 	return ok({ rem, val });
 }
 
-function error(input: Slice): Err<ParserError> {
+function error(input: SliceStr): Err<ParserError> {
 	return err(ParserError.newError(input));
 }
 
-function maybeIncomplete(complete: boolean, input: Slice, needed?: number): Err<ParserError> {
+function maybeIncomplete(complete: boolean, input: SliceStr, needed?: number): Err<ParserError> {
 	return err(complete ? ParserError.newError(input) : ParserError.newIncomplete(needed));
 }
 
@@ -152,10 +152,10 @@ interface ParserErrorIncomplete {
 
 interface ParserErrorError {
 	kind: ErrKind.Error;
-	input?: Slice;
+	input?: SliceStr;
 }
 
 interface ParserErrorFailure {
 	kind: ErrKind.Failure;
-	input?: Slice;
+	input?: SliceStr;
 }

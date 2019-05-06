@@ -1,3 +1,5 @@
+import { Frozen, Immutable } from "./decorators";
+
 export interface IResult<T, E> {
 	andThen<U>(cb: (val: T) => IResult<U, E>): IResult<U, E>;
 	isOk(): boolean;
@@ -9,6 +11,8 @@ export interface IResult<T, E> {
 	unwrapErr(): E;
 }
 
+@Frozen
+@Immutable
 export class Ok<T> implements IResult<T, never> {
 	constructor(private val: T) {}
 
@@ -24,11 +28,11 @@ export class Ok<T> implements IResult<T, never> {
 		return false;
 	}
 
-	map<U>(cb: (val: T) => U): IResult<U, never> {
+	map<U>(cb: (val: T) => U): Ok<U> {
 		return ok(cb(this.val));
 	}
 
-	mapErr(): IResult<T, never> {
+	mapErr(): Ok<T> {
 		return this;
 	}
 
@@ -45,10 +49,12 @@ export class Ok<T> implements IResult<T, never> {
 	}
 }
 
+@Frozen
+@Immutable
 export class Err<E> implements IResult<never, E> {
 	constructor(private err: E) {}
 
-	andThen(): IResult<never, E> {
+	andThen(): Err<E> {
 		return this;
 	}
 
@@ -60,11 +66,11 @@ export class Err<E> implements IResult<never, E> {
 		return true;
 	}
 
-	map(): IResult<never, E> {
+	map(): Err<E> {
 		return this;
 	}
 
-	mapErr<U>(cb: (val: E) => U): IResult<never, U> {
+	mapErr<U>(cb: (val: E) => U): Err<U> {
 		return err(cb(this.err));
 	}
 
