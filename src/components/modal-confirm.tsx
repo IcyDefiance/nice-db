@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Button, Modal } from "react-bootstrap";
 import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@material-ui/core";
 
 type ButtonVariants =
 	| "primary"
@@ -50,23 +50,22 @@ export function ModalConfirm() {
 
 	function okay() {
 		confirmSubj!.next();
+		confirmSubj!.complete();
 		hide();
 	}
 
 	return (
-		<Modal show={show} onHide={hide}>
-			<Modal.Header closeButton>
-				<Modal.Title>Please Confirm</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>{opts.msg}</Modal.Body>
-			<Modal.Footer>
-				<Button variant="secondary" onClick={hide}>
-					Cancel
-				</Button>
-				<Button variant={opts.variant || "primary"} onClick={okay}>
+		<Dialog open={show} onClose={hide} aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+			<DialogTitle id="confirm-title">Please Confirm</DialogTitle>
+			<DialogContent>
+				<DialogContentText id="confirm-desc">{opts.msg}</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={hide}>Cancel</Button>
+				<Button onClick={okay} color="secondary">
 					{opts.confirmText || "Okay"}
 				</Button>
-			</Modal.Footer>
-		</Modal>
+			</DialogActions>
+		</Dialog>
 	);
 }

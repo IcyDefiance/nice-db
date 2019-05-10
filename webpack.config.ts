@@ -5,14 +5,15 @@ import { Configuration } from "webpack";
 
 const config: Configuration = {
 	entry: "./src/index.tsx",
-	devtool: "inline-source-map",
 	target: "node",
 	node: { __dirname: false, __filename: false },
 	module: {
 		rules: [
 			{ test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
 			{ test: /\.scss$/, use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"] },
+			{ test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
 			{ test: /\.node$/, use: "node-loader" },
+			{ test: /\.(woff|woff2)$/, use: { loader: "file-loader", options: { name: "fonts/[name].[ext]" } } },
 		],
 	},
 	plugins: [new MiniCssExtractPlugin({ filename: "[name].css", chunkFilename: "[id].css" })],

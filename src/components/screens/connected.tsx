@@ -4,10 +4,10 @@ import { getPassword$ } from "@util/keytar-rx";
 import { createConnection, QueryError, RowDataPacket } from "@util/mysql-rx";
 import { tuple } from "@util/tuple";
 import * as React from "react";
-import { Button, Table } from "react-bootstrap";
 import { combineLatest, of, Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
 import { catchError, delayWhen, map, switchMap } from "rxjs/operators";
+import { Button, Table, TableHead, TableBody, TableRow, TableCell } from "@material-ui/core";
 
 const run$ = new Subject<void>();
 
@@ -42,29 +42,29 @@ export function ScreenConnected({ config }: IScreenConnectedProps) {
 
 	return (
 		<>
-			<Button variant="secondary" size="sm" onClick={() => run$.next()}>
+			<Button color="primary" size="small" onClick={() => run$.next()}>
 				Run
 			</Button>
 			<Editor className="mt-1" onChange={(sql) => sql$.next(sql)} />
 			<div className="text-danger">{err}</div>
 			{rows && fields && (
-				<Table striped bordered size="sm" className="mt-3">
-					<thead>
-						<tr>
+				<Table>
+					<TableHead>
+						<TableRow>
 							{fields.map((field, i) => (
-								<th key={i}>{field.name}</th>
+								<TableCell key={i}>{field.name}</TableCell>
 							))}
-						</tr>
-					</thead>
-					<tbody>
+						</TableRow>
+					</TableHead>
+					<TableBody>
 						{rows.map((row, i) => (
-							<tr key={i}>
+							<TableRow key={i}>
 								{fields.map((field, i) => (
-									<td key={i}>{row[field.name]}</td>
+									<TableCell key={i}>{row[field.name]}</TableCell>
 								))}
-							</tr>
+							</TableRow>
 						))}
-					</tbody>
+					</TableBody>
 				</Table>
 			)}
 		</>
