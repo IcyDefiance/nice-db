@@ -1,22 +1,13 @@
 import { Icon } from "@components/icons/icon";
 import { miDatabasePlus, miDelete } from "@components/icons/icons";
 import { confirm } from "@components/modal-confirm";
-import {
-	Button,
-	Card,
-	CardActionArea,
-	CardActions,
-	CardContent,
-	Fade,
-	Grid,
-	IconButton,
-	Typography,
-} from "@material-ui/core";
+import { Card, CardActionArea, CardActions, CardContent, Fade, Grid, IconButton, Typography } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import { conns$, delConn$, ISafeConnectionOptions } from "@state/conns";
 import * as React from "react";
 import { useObservable } from "rxjs-hooks";
 import { ModalConn, showModalConn } from "./choose-conn/modal-conn";
+import { Button } from "../common/button";
 
 export interface IScreenChooseConnProps {
 	onConnected: (config: ISafeConnectionOptions) => void;
@@ -33,8 +24,8 @@ export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 
 	return (
 		<Box m={2}>
-			<Button variant="outlined" onClick={showModalConn} className="text-nowrap">
-				<Icon icon={miDatabasePlus} /> Add Connection
+			<Button variant="outlined" icon={miDatabasePlus} onClick={showModalConn}>
+				Add Connection
 			</Button>
 			<Box mt={2}>
 				<Grid container spacing={2}>
@@ -51,7 +42,8 @@ export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 										</CardContent>
 									</CardActionArea>
 									<CardActions>
-										<Button size="small" color="primary" onClick={() => onConnected(conn)}>
+										<Button onClick={() => onConnected(conn)}>
+											{/* size="small" color="primary" */}
 											Connect
 										</Button>
 										<IconButton

@@ -10,7 +10,14 @@ const config: Configuration = {
 	module: {
 		rules: [
 			{ test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
-			{ test: /\.scss$/, use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"] },
+			{
+				test: /\.scss$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					"css-loader",
+					{ loader: "sass-loader", options: { includePaths: ["./node_modules"] } },
+				],
+			},
 			{ test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
 			{ test: /\.node$/, use: "node-loader" },
 			{ test: /\.(woff|woff2)$/, use: { loader: "file-loader", options: { name: "fonts/[name].[ext]" } } },
