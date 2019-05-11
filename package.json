@@ -11,6 +11,7 @@
 	"author": "IcyDefiance <icydefiance@gmail.com>",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/classnames": "^2.2.7",
 		"@types/mini-css-extract-plugin": "^0.2.0",
 		"@types/mysql2": "github:types/mysql2",
 		"@types/react": "^16.8.14",
@@ -38,7 +39,11 @@
 	"dependencies": {
 		"@material-ui/core": "^4.0.0-beta.1",
 		"@material/button": "^2.1.1",
+		"@material/card": "^2.1.1",
+		"@material/icon-button": "^2.1.1",
+		"@material/layout-grid": "^0.41.0",
 		"@material/ripple": "^2.1.1",
+		"classnames": "^2.2.6",
 		"keytar": "^4.6.0",
 		"mysql2": "^1.6.5",
 		"react": "^16.8.6",
