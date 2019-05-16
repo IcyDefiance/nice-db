@@ -1,15 +1,17 @@
+import { Icon } from "@components/icons/icon";
 import { miDatabasePlus, miDelete } from "@components/icons/icons";
 import { confirm } from "@components/modal-confirm";
-import { Fade, Typography } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import Button from "@material/react-button";
+import Card, { CardActionButtons, CardActionIcons, CardActions, CardPrimaryContent } from "@material/react-card";
+import IconButton from "@material/react-icon-button";
+import { Headline5 } from "@material/react-typography";
 import { conns$, delConn$, ISafeConnectionOptions } from "@state/conns";
 import * as React from "react";
 import { useObservable } from "rxjs-hooks";
-import { Button } from "../common/button/button";
-import { IconButton } from "../common/icon-button/icon-button";
-import { LayoutGrid } from "../common/layout-grid/layout-grid";
+import { CardContent } from "../material/card";
+import { LayoutGrid } from "../material/layout-grid";
 import { ModalConn, showModalConn } from "./choose-conn/modal-conn";
-import { Card } from "../common/card/card";
 
 export interface IScreenChooseConnProps {
 	onConnected: (config: ISafeConnectionOptions) => void;
@@ -26,36 +28,33 @@ export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 
 	return (
 		<Box m={2}>
-			<Button variant="outlined" icon={miDatabasePlus} onClick={showModalConn}>
+			<Button outlined icon={<Icon icon={miDatabasePlus} />} onClick={showModalConn}>
 				Add Connection
 			</Button>
 			<Box mt={2}>
 				<LayoutGrid>
 					{conns.map((conn, i) => (
 						<LayoutGrid.Cell key={i}>
-							<Fade in>
-								<Card style={{ width: "18rem" }}>
-									<Card.PrimaryAction onClick={() => onConnected(conn)}>
-										<Card.Content>
-											<Typography variant="h5" gutterBottom>
-												{conn.host}:{conn.port}
-											</Typography>
-											<b>User:</b> {conn.user}
-										</Card.Content>
-									</Card.PrimaryAction>
-									<Card.Actions
-										buttons={[<Button onClick={() => onConnected(conn)}>Connect</Button>]}
-										icons={[
-											<IconButton
-												aria-label="Delete connection"
-												onClick={() => handleDeleteClick(i)}
-												style={{ marginLeft: "auto" }}
-												icon={miDelete}
-											/>,
-										]}
-									/>
-								</Card>
-							</Fade>
+							<Card>
+								<CardPrimaryContent onClick={() => onConnected(conn)}>
+									<CardContent>
+										<Headline5 tag="div">
+											{conn.host}:{conn.port}
+										</Headline5>
+										<b>User:</b> {conn.user}
+									</CardContent>
+								</CardPrimaryContent>
+								<CardActions>
+									<CardActionButtons>
+										<Button onClick={() => onConnected(conn)}>Connect</Button>
+									</CardActionButtons>
+									<CardActionIcons>
+										<IconButton aria-label="Delete connection" onClick={() => handleDeleteClick(i)}>
+											<Icon icon={miDelete} />
+										</IconButton>
+									</CardActionIcons>
+								</CardActions>
+							</Card>
 						</LayoutGrid.Cell>
 					))}
 				</LayoutGrid>

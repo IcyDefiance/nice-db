@@ -2,7 +2,6 @@ import { MDCRipple } from "@material/ripple";
 import * as React from "react";
 import styled from "styled-components";
 import classNames from "classnames";
-import "./card.scss";
 
 export function Card(props: React.ButtonHTMLAttributes<HTMLDivElement>) {
 	let className = "mdc-card";
@@ -55,6 +54,6 @@ Card.Actions = ({ buttons, icons }: ICardActionsProps) => {
 function Content(props: React.ButtonHTMLAttributes<HTMLDivElement>) {
 	return <div {...props} />;
 }
-Card.Content = styled(Content)`
+export const CardContent = styled(Content)`
 	padding: 16px;
 `;

@@ -1,5 +1,4 @@
 import * as React from "react";
-import "./layout-grid.scss";
 
 export interface IGridProps {
 	children?: React.ReactNode;
