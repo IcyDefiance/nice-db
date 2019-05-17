@@ -1,15 +1,9 @@
-import {
-	Button,
-	Checkbox,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	FormControlLabel,
-	Grid,
-	LinearProgress,
-	TextField,
-} from "@material-ui/core";
+import Button from "@material/react-button";
+import Checkbox from "@material/react-checkbox";
+import Dialog, { DialogContent, DialogFooter, DialogTitle } from "@material/react-dialog";
+import { Cell, Grid, Row } from "@material/react-layout-grid";
+import LinearProgress from "@material/react-linear-progress";
+import TextField, { Input } from "@material/react-text-field";
 import { addConn$ } from "@state/conns";
 import { createConnection, QueryError } from "@util/mysql-rx";
 import * as React from "react";
@@ -72,45 +66,56 @@ export function ModalConn() {
 	}
 
 	return (
-		<Dialog open={show} onClose={hide} aria-labelledby="addconn-title">
-			<DialogTitle id="addconn-title">Add Connection</DialogTitle>
+		<Dialog open={show} onClose={hide}>
+			<DialogTitle>Add Connection</DialogTitle>
 			<DialogContent>
-				<Grid container spacing={2}>
-					<Grid item>
-						<TextField label="Host" value={host} onChange={handleHostChange} />
-					</Grid>
-					<Grid item>
-						<TextField type="number" label="Port" value={port.toString()} onChange={handlePortChange} />
-					</Grid>
-					<Grid item>
-						<TextField label="Username" value={user} onChange={handleUserChange} />
-					</Grid>
-					<Grid item>
-						<TextField type="password" label="Password" onChange={handlePasswordChange} />
-					</Grid>
-					<Grid item>
-						<FormControlLabel
-							control={
+				<Grid className="p-0">
+					<Row>
+						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
+							<TextField label="Host">
+								<Input value={host} onChange={handleHostChange} />
+							</TextField>
+						</Cell>
+						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
+							<TextField label="Port">
+								<Input type="number" value={port.toString()} onChange={handlePortChange} />
+							</TextField>
+						</Cell>
+					</Row>
+					<Row className="mt-2">
+						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
+							<TextField label="Username">
+								<Input value={user} onChange={handleUserChange} />
+							</TextField>
+						</Cell>
+						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
+							<TextField label="Password">
+								<Input type="password" value={password} onChange={handlePasswordChange} />
+							</TextField>
+						</Cell>
+					</Row>
+					<Row className="mt-2">
+						<Cell columns={12}>
+							<div className="mdc-form-field">
 								<Checkbox
+									nativeControlId="remember"
 									disabled={!password}
 									checked={remember && !!password}
 									onChange={handleRememberChange}
 								/>
-							}
-							label="Remember password"
-						/>
-					</Grid>
+								<label htmlFor="remember">Remember password</label>
+							</div>
+						</Cell>
+					</Row>
 				</Grid>
 				{/* Passwords are stored securely using your operating system's keychain. */}
-				<div className="mt-3">{connecting && <LinearProgress />}</div>
+				<div className="mt-3">{connecting && <LinearProgress indeterminate />}</div>
 			</DialogContent>
-			<DialogActions>
+			<DialogFooter>
 				<Button onClick={testConn}>Test Connection</Button>
 				<Button onClick={hide}>Close</Button>
-				<Button color="primary" onClick={save}>
-					Save Changes
-				</Button>
-			</DialogActions>
+				<Button onClick={save}>Save Changes</Button>
+			</DialogFooter>
 		</Dialog>
 	);
 }

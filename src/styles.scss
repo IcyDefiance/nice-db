@@ -1,6 +1,38 @@
+@import "@material/form-field/mdc-form-field";
 @import "@material/layout-grid/mdc-layout-grid";
-@import "@material/ripple/mdc-ripple";
 @import "@material/react-button/index.scss";
 @import "@material/react-card/index.scss";
+@import "@material/react-checkbox/index.scss";
+@import "@material/react-dialog/index.scss";
 @import "@material/react-icon-button/index.scss";
+@import "@material/react-layout-grid/index.scss";
+@import "@material/react-linear-progress/index.scss";
+@import "@material/react-text-field/index.scss";
 @import "@material/react-typography/index.scss";
+@import "@material/ripple/mdc-ripple";
+
+$spacer: 8px;
+
+@each $prop, $abbrev in (margin: m, padding: p) {
+	@for $size from 0 through 2 {
+		.#{$abbrev}-#{$size} {
+			#{$prop}: $spacer * $size !important;
+		}
+		.#{$abbrev}t-#{$size},
+		.#{$abbrev}y-#{$size} {
+			#{$prop}-top: $spacer * $size !important;
+		}
+		.#{$abbrev}r-#{$size},
+		.#{$abbrev}x-#{$size} {
+			#{$prop}-right: $spacer * $size !important;
+		}
+		.#{$abbrev}b-#{$size},
+		.#{$abbrev}y-#{$size} {
+			#{$prop}-bottom: $spacer * $size !important;
+		}
+		.#{$abbrev}l-#{$size},
+		.#{$abbrev}x-#{$size} {
+			#{$prop}-left: $spacer * $size !important;
+		}
+	}
+}

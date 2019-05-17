@@ -1,7 +1,6 @@
 import { Icon } from "@components/icons/icon";
 import { miDatabasePlus, miDelete } from "@components/icons/icons";
 import { confirm } from "@components/modal-confirm";
-import Box from "@material-ui/core/Box";
 import Button from "@material/react-button";
 import Card, { CardActionButtons, CardActionIcons, CardActions, CardPrimaryContent } from "@material/react-card";
 import IconButton from "@material/react-icon-button";
@@ -27,11 +26,11 @@ export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 	}
 
 	return (
-		<Box m={2}>
+		<div className="m-2">
 			<Button outlined icon={<Icon icon={miDatabasePlus} />} onClick={showModalConn}>
 				Add Connection
 			</Button>
-			<Box mt={2}>
+			<div className="mt-2">
 				<LayoutGrid>
 					{conns.map((conn, i) => (
 						<LayoutGrid.Cell key={i}>
@@ -58,8 +57,8 @@ export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 						</LayoutGrid.Cell>
 					))}
 				</LayoutGrid>
-			</Box>
+			</div>
 			<ModalConn />
-		</Box>
+		</div>
 	);
 }

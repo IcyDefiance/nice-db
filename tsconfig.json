@@ -8,6 +8,7 @@
 		"target": "esnext",
 		"jsx": "react",
 		"strictNullChecks": true,
+		"allowSyntheticDefaultImports": true,
 		"experimentalDecorators": true,
 		"paths": {
 			"@components/*": ["./src/components/*"],

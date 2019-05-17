@@ -1,7 +1,7 @@
+import Dialog, { DialogButton, DialogContent, DialogFooter, DialogTitle } from "@material/react-dialog";
 import * as React from "react";
 import { Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@material-ui/core";
 
 type ButtonVariants =
 	| "primary"
@@ -43,29 +43,22 @@ export function ModalConfirm() {
 	const opts = useObservable(() => optsSubj) || { msg: "" };
 	const show = useObservable(() => showSubj) || false;
 
-	function hide() {
+	function hide(action: string) {
+		if (action === "ok") {
+			confirmSubj!.next();
+		}
 		confirmSubj!.complete();
 		showSubj.next(false);
 	}
 
-	function okay() {
-		confirmSubj!.next();
-		confirmSubj!.complete();
-		hide();
-	}
-
 	return (
 		<Dialog open={show} onClose={hide} aria-labelledby="confirm-title" aria-describedby="confirm-desc">
-			<DialogTitle id="confirm-title">Please Confirm</DialogTitle>
-			<DialogContent>
-				<DialogContentText id="confirm-desc">{opts.msg}</DialogContentText>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={hide}>Cancel</Button>
-				<Button onClick={okay} color="secondary">
-					{opts.confirmText || "Okay"}
-				</Button>
-			</DialogActions>
+			<DialogTitle>Please Confirm</DialogTitle>
+			<DialogContent>{opts.msg}</DialogContent>
+			<DialogFooter>
+				<DialogButton action="cancel">Cancel</DialogButton>
+				<DialogButton action="ok">{opts.confirmText || "Okay"}</DialogButton>
+			</DialogFooter>
 		</Dialog>
 	);
 }
