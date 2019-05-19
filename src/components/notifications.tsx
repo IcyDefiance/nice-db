@@ -14,7 +14,7 @@ export function notify(msg: string) {
 export function Notifications() {
 	const notifications = useObservable(() => notificationsBS);
 
-	function handleClose(idx: number) {
+	function onClose(idx: number) {
 		const clone = tuple(...notificationsBS.value);
 		clone[idx] = null;
 		notificationsBS.next(clone);
@@ -28,7 +28,7 @@ export function Notifications() {
 						key={i}
 						open={!!notification}
 						autoHideDuration={5000}
-						onClose={() => handleClose(i)}
+						onClose={() => onClose(i)}
 						message={notification}
 					/>
 				))}

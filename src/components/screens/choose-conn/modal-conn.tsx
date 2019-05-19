@@ -29,13 +29,11 @@ export function ModalConn() {
 	const show = useObservable(() => showSubj) || false;
 
 	const config = () => ({ host, port, user, password });
-	const handleHostChange = (event: React.ChangeEvent<HTMLInputElement>) => setHost(event.currentTarget.value!);
-	const handlePortChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-		setPort(Number(event.currentTarget.value!));
-	const handleUserChange = (event: React.ChangeEvent<HTMLInputElement>) => setUser(event.currentTarget.value!);
-	const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-		setPassword(event.currentTarget.value!);
-	const handleRememberChange = () => setRemember(!remember);
+	const onHostChange = (event: React.ChangeEvent<HTMLInputElement>) => setHost(event.currentTarget.value!);
+	const onPortChange = (event: React.ChangeEvent<HTMLInputElement>) => setPort(Number(event.currentTarget.value!));
+	const onUserChange = (event: React.ChangeEvent<HTMLInputElement>) => setUser(event.currentTarget.value!);
+	const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.currentTarget.value!);
+	const onRememberChange = () => setRemember(!remember);
 
 	function hide() {
 		setHost("localhost");
@@ -73,36 +71,31 @@ export function ModalConn() {
 					<Row>
 						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
 							<TextField label="Host">
-								<Input value={host} onChange={handleHostChange} />
+								<Input value={host} onChange={onHostChange} />
 							</TextField>
 						</Cell>
 						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
 							<TextField label="Port">
-								<Input type="number" value={port.toString()} onChange={handlePortChange} />
+								<Input type="number" value={port.toString()} onChange={onPortChange} />
 							</TextField>
 						</Cell>
 					</Row>
 					<Row className="mt-2">
 						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
 							<TextField label="Username">
-								<Input value={user} onChange={handleUserChange} />
+								<Input value={user} onChange={onUserChange} />
 							</TextField>
 						</Cell>
 						<Cell phoneColumns={4} tabletColumns={8} desktopColumns={6}>
 							<TextField label="Password">
-								<Input type="password" value={password} onChange={handlePasswordChange} />
+								<Input type="password" value={password} onChange={onPasswordChange} />
 							</TextField>
 						</Cell>
 					</Row>
 					<Row className="mt-2">
 						<Cell columns={12}>
 							<div className="mdc-form-field">
-								<Checkbox
-									nativeControlId="remember"
-									disabled={!password}
-									checked={remember && !!password}
-									onChange={handleRememberChange}
-								/>
+								<Checkbox nativeControlId="remember" checked={remember} onChange={onRememberChange} />
 								<label htmlFor="remember">Remember password</label>
 							</div>
 						</Cell>

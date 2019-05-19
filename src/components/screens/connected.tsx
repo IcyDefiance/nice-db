@@ -1,13 +1,14 @@
 import { Editor } from "@components/editor";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@material-ui/core";
+import Button from "@material/react-button";
 import { ISafeConnectionOptions } from "@state/conns";
 import { getPassword$ } from "@util/keytar-rx";
-import { createConnection, QueryError, RowDataPacket } from "@util/mysql-rx";
+import { createConnection, QueryError, RowDataPacket, Connection } from "@util/mysql-rx";
 import { tuple } from "@util/tuple";
 import * as React from "react";
 import { combineLatest, of, Subject } from "rxjs";
 import { useObservable } from "rxjs-hooks";
 import { catchError, delayWhen, map, switchMap } from "rxjs/operators";
-import { Button, Table, TableHead, TableBody, TableRow, TableCell } from "@material-ui/core";
 
 const run$ = new Subject<void>();
 
@@ -41,32 +42,36 @@ export function ScreenConnected({ config }: IScreenConnectedProps) {
 	) || [null, null, null];
 
 	return (
-		<>
-			<Button color="primary" size="small" onClick={() => run$.next()}>
-				Run
-			</Button>
-			<Editor className="mt-1" onChange={(sql) => sql$.next(sql)} />
-			<div className="text-danger">{err}</div>
-			{rows && fields && (
-				<Table>
-					<TableHead>
-						<TableRow>
-							{fields.map((field, i) => (
-								<TableCell key={i}>{field.name}</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows.map((row, i) => (
-							<TableRow key={i}>
+		<div className="h-100 d-flex flex-column">
+			<div className="p-3">
+				<Button dense onClick={() => run$.next()}>
+					Run
+				</Button>
+				<Editor className="mt-1" onChange={(sql) => sql$.next(sql)} />
+			</div>
+			<div className="pt-2" style={{ maxHeight: "33%" }}>
+				<div className="text-danger">{err}</div>
+				{rows && fields && (
+					<Table>
+						<TableHead>
+							<TableRow>
 								{fields.map((field, i) => (
-									<TableCell key={i}>{row[field.name]}</TableCell>
+									<TableCell key={i}>{field.name}</TableCell>
 								))}
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			)}
-		</>
+						</TableHead>
+						<TableBody>
+							{rows.map((row, i) => (
+								<TableRow key={i}>
+									{fields.map((field, i) => (
+										<TableCell key={i}>{row[field.name]}</TableCell>
+									))}
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				)}
+			</div>
+		</div>
 	);
 }

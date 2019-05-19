@@ -19,7 +19,7 @@ export interface IScreenChooseConnProps {
 export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 	const conns = useObservable(() => conns$) || [];
 
-	function handleDeleteClick(index: number) {
+	function onDeleteClick(index: number) {
 		confirm("Are you sure you want to delete this connection?", "Delete", "danger").subscribe(() =>
 			delConn$(index).subscribe(),
 		);
@@ -48,7 +48,7 @@ export function ScreenChooseConn({ onConnected }: IScreenChooseConnProps) {
 										<Button onClick={() => onConnected(conn)}>Connect</Button>
 									</CardActionButtons>
 									<CardActionIcons>
-										<IconButton aria-label="Delete connection" onClick={() => handleDeleteClick(i)}>
+										<IconButton aria-label="Delete connection" onClick={() => onDeleteClick(i)}>
 											<Icon icon={miDelete} />
 										</IconButton>
 									</CardActionIcons>
